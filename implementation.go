@@ -1,7 +1,11 @@
 package lab2
 
-import "fmt"
-
+import (
+	"errors"
+	"fmt"
+	"regexp"
+	"strings"
+)
 
 type TypeOfNode int
 
@@ -18,21 +22,39 @@ type node struct {
 	right      *node
 }
 
-// TODO: document this function.
-// PrefixToPostfix converts
+// PrefixToPostfix converts an input expression from a prefix notation
+// to a postfix entry. First, function validates the input expression.
+// If an input string is not a prefix notation then error occurred. In
+// general, the function builds a binary tree of the expression, and
+// then forms the result.
 func PrefixToPostfix(input string) (string, error) {
-	input += " "
+	isValid := validate(input)
+	if isValid != true {
+		return "", fmt.Errorf("the input expression contains not allowed symbols")
+	}
+
+	root, err := buildExpressionTree(input)
+	if err != nil {
+		return "", fmt.Errorf("%s", err)
+	}
+
+	postfix := getPostfixFromTree(root)
+	return postfix, nil
+}
+
+func buildExpressionTree(expression string) (*node, error) {
+	expression += " "
 	var nodeStack []*node
-	var prevElem string
-	elem := ""
-	for _, char := range input {
-		if string(char) == " " {
+	var prevElem, elem string
+	for _, code := range expression {
+		char := string(code)
+		if char == " " {
 			if prevElem == "" {
 				if isOperator(elem) {
 					node := node{OPERATOR, elem, nil, nil, nil}
 					nodeStack = append(nodeStack, &node)
 				} else {
-					return "", fmt.Errorf("The prefix notation expression was not found")
+					return nil, errors.New("the prefix notation expression was not found")
 				}
 			} else if isOperator(elem) && isOperator(prevElem) {
 				parent := nodeStack[len(nodeStack)-1]
@@ -73,10 +95,28 @@ func PrefixToPostfix(input string) (string, error) {
 			elem = ""
 			continue
 		}
-		elem += string(char)
+		elem += char
 	}
+	return nodeStack[0], nil
+}
 
+func isOperator(s string) bool {
+	flag := false
+	switch s {
+	case "+", "-", "*", "/", "^":
+		flag = true
+	}
+	return flag
+}
+
+func validate(expression string) bool {
+	matched, _ := regexp.MatchString(`^[\d\s+\-*/^]+$`, expression)
+	return matched
+}
+
+func getPostfixFromTree(root *node) string {
 	var result string
+	nodeStack := []*node{root}
 	isVisited := make(map[*node]bool)
 	for len(nodeStack) > 0 {
 		node := nodeStack[len(nodeStack)-1]
@@ -87,6 +127,14 @@ func PrefixToPostfix(input string) (string, error) {
 			nodeStack = nodeStack[:len(nodeStack)-1]
 			isVisited[node] = true
 		} else {
+			if !isVisited[node.left] && !isVisited[node.right] {
+				if node.value == "+" || node.value == "*" {
+					if !isOperator(node.left.value) && isOperator(node.right.value) {
+						nodeStack = append(nodeStack, node.right)
+						continue
+					}
+				}
+			}
 			if isVisited[node.left] {
 				nodeStack = append(nodeStack, node.right)
 			} else {
@@ -95,22 +143,5 @@ func PrefixToPostfix(input string) (string, error) {
 		}
 	}
 
-	return result, nil
-}
-
-func isOperator(s string) bool {
-	flag := false
-	switch s {
-	case "+":
-		flag = true
-	case "-":
-		flag = true
-	case "*":
-		flag = true
-	case "/":
-		flag = true
-	default:
-		flag = false
-	}
-	return flag
+	return strings.TrimSpace(result)
 }

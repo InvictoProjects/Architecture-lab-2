@@ -48,17 +48,17 @@ func (s *MySuite) TestPrefixToPostfixExponent(c *C) {
 }
 
 func (s *MySuite) TestPrefixToPostfixComplexExpressions(c *C) {
-	res1, err1 := PrefixToPostfix("/ + + 2 - / 4 * 5 - 5 * 7 * + 3 - 3 5 * - * 5 3 5 / 7")
+	res1, err1 := PrefixToPostfix("/ + + 2 - / 4 * 5 - 5 * 7 10 5 / 6 1 7")
 	c.Assert(err1, IsNil)
-	c.Assert(res1, Equals, "7 / 5 3 * 5 - * 3 3 5 - + * 7 * 5 - 5 * 4 / - 2 + + /")
+	c.Assert(res1, Equals, "4 5 7 10 * - 5 * / 5 - 2 + 6 1 / + 7 /")
 
 	res2, err2 := PrefixToPostfix("- * + 3 - 5 7 - 4 + 2 / 5 4 / + 1 * 3 7 2")
 	c.Assert(err2, IsNil)
-	c.Assert(res2, Equals, "3 5 7 - + 4 2 5 4 / + - * 1 3 7 * + 2 / -")
+	c.Assert(res2, Equals, "5 7 - 3 + 4 5 4 / 2 + - * 3 7 * 1 + 2 / -")
 
 	res3, err3 := PrefixToPostfix("+ 5 * - 4 2 3")
 	c.Assert(err3, IsNil)
-	c.Assert(res3, Equals, "5 4 2 - 3 * +")
+	c.Assert(res3, Equals, "4 2 - 3 * 5 +")
 }
 
 func (s *MySuite) TestPrefixToPostfixEmptyString(c *C) {
@@ -91,7 +91,8 @@ func (s *MySuite) TestPrefixToPostfixWithoutOperators(c *C) {
 	c.Assert(res2, Equals, "")
 }
 
+// ExamplePrefixToPostfix is an example of using the PrefixToPostfix function
 func ExamplePrefixToPostfix() {
-	res, _ := PrefixToPostfix("+ 2 2")
+	res, _ := PrefixToPostfix("+ 5 * - 4 2 1")
 	fmt.Println(res)
 }
