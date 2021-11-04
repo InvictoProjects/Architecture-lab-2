@@ -1,5 +1,5 @@
 // TODO: Rename to your own module.
-module github.com/invictoProjects/architecture-lab-2
+module github.com/invictoProjects/Architecture-lab-2
 
 go 1.17
 
