@@ -8,7 +8,6 @@ import (
 	"io"
 	"os"
 	"strings"
-	lab2 "github.com/invictoProjects/Architecture-lab-2"
 )
 
 var inputExpression string
