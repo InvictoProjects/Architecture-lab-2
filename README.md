@@ -1,4 +1,7 @@
-Шаблон для 2-гої роботи з архітектури ПЗ
+2-га лабораторна робота з архітектури ПЗ
 ---
 
-Використайте кнопку **"Use this template"**, щоб створити власний репозиторій.
+[Приклад успішної збірки](https://github.com/InvictoProjects/Architecture-lab-2/actions/runs/1429737601)  
+[Приклад неуспішної збірки](https://github.com/InvictoProjects/Architecture-lab-2/actions/runs/1429730191)  
+[Pull Request, для якого було запущено збірку](https://github.com/InvictoProjects/Architecture-lab-2/pull/1)  
+[![Makefile CI](https://github.com/InvictoProjects/Architecture-lab-2/actions/workflows/build.yml/badge.svg)](https://github.com/InvictoProjects/Architecture-lab-2/actions/workflows/build.yml)
