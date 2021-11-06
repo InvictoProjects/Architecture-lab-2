@@ -11,7 +11,6 @@ import (
 	lab2 "github.com/invictoProjects/Architecture-lab-2"
 )
 
-
 var inputExpression string
 var inputFile string
 var outputFile string
