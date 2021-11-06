@@ -4,7 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	lab2 "github.com/invictoProjects/Architecture-lab-2"
+	lab2 "github.com/invictoprojects/architecture-lab-2"
 	"io"
 	"os"
 	"strings"
