@@ -1,27 +1,76 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
-	lab2 "github.com/roman-mazur/architecture-lab-2"
+	lab2 "github.com/invictoprojects/architecture-lab-2"
+	"io"
+	"os"
+	"strings"
 )
 
-var (
-	inputExpression = flag.String("e", "", "Expression to compute")
-	// TODO: Add other flags support for input and output configuration.
-)
+var inputExpression string
+var inputFile string
+var outputFile string
 
 func main() {
+	flag.StringVar(&inputExpression, "e", "", "Expression to compute")
+	flag.StringVar(&inputFile, "f", "", "File to read expression from")
+	flag.StringVar(&outputFile, "o", "", "File to write output to")
 	flag.Parse()
 
-	// TODO: Change this to accept input from the command line arguments as described in the task and
-	//       output the results using the ComputeHandler instance.
-	//       handler := &lab2.ComputeHandler{
-	//           Input: {construct io.Reader according the command line parameters},
-	//           Output: {construct io.Writer according the command line parameters},
-	//       }
-	//       err := handler.Compute()
+	reader, writer, err := getReaderAndWriter()
+	if err != nil {
+		_, err2 := fmt.Fprintln(os.Stderr, "error occurred: ", err)
+		if err2 != nil {
+			fmt.Println(err2)
+		}
+	}
 
-	res, _ := lab2.PrefixToPostfix("+ 2 2")
-	fmt.Println(res)
+	handler := &lab2.ComputeHandler{Reader: reader, Writer: writer}
+	err = handler.Compute()
+	if err != nil {
+		_, err2 := fmt.Fprintln(os.Stderr, "error occurred: ", err)
+		if err2 != nil {
+			fmt.Println(err2)
+		}
+	}
+}
+
+func getReaderAndWriter() (io.Reader, io.Writer, error) {
+	if inputExpression != "" && inputFile != "" {
+		return nil, nil, errors.New("both expression and file to read given")
+	} else if inputExpression == "" && inputFile == "" {
+		return nil, nil, errors.New("no expression is given")
+	}
+
+	var reader io.Reader
+	if inputFile != "" {
+		file, err := os.Open(inputFile)
+		if err != nil {
+			return nil, nil, errors.New("error reading file")
+		}
+		if err != nil {
+			return nil, nil, err
+		}
+		reader = file
+	} else {
+		reader = strings.NewReader(inputExpression)
+	}
+
+	var writer io.Writer
+	if outputFile != "" {
+		file, err := os.OpenFile(outputFile, os.O_WRONLY, os.ModeAppend)
+		if err != nil {
+			return nil, nil, errors.New("error opening file to write output to")
+		}
+		if err != nil {
+			return nil, nil, err
+		}
+		writer = file
+	} else {
+		writer = os.Stdout
+	}
+	return reader, writer, nil
 }
