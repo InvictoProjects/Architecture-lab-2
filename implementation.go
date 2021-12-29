@@ -115,15 +115,15 @@ func validate(expression string) bool {
 }
 
 func getPostfixFromTree(root *node) string {
-	var result string
+	var result strings.Builder
 	nodeStack := []*node{root}
 	isVisited := make(map[*node]bool)
 	for len(nodeStack) > 0 {
 		node := nodeStack[len(nodeStack)-1]
 		if (node.left == nil || isVisited[node.left]) &&
 			(node.right == nil || isVisited[node.right]) {
-			result += node.value
-			result += " "
+			result.WriteString(node.value)
+			result.WriteString(" ")
 			nodeStack = nodeStack[:len(nodeStack)-1]
 			isVisited[node] = true
 		} else {
@@ -143,5 +143,5 @@ func getPostfixFromTree(root *node) string {
 		}
 	}
 
-	return strings.TrimSpace(result)
+	return strings.TrimSpace(result.String())
 }
